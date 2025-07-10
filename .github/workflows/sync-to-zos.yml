@@ -1,0 +1,32 @@
+name: Sync member1 to Z/OS PDS
+
+on:
+  push:
+    paths:
+      - 'member1'  # Only trigger when member1 is changed
+
+jobs:
+  sync-to-zos:
+    runs-on: ubuntu-latest
+
+    env:
+      ZOS_HOST: ${{ secrets.ZOS_HOST }}
+      ZOS_PORT: ${{ secrets.ZOS_PORT }}
+      ZOS_USER: ${{ secrets.ZOS_USER }}
+      ZOS_PASS: ${{ secrets.ZOS_PASS }}
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install Zowe CLI
+        run: npm install -g @zowe/cli
+
+      - name: Run Zowe sync script
+        run: bash ./sync_to_zos.sh
+
